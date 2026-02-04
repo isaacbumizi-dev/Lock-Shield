@@ -1,0 +1,21 @@
+# Interface graphique
+kivy==2.2.1
+kivymd==1.1.1
+screeninfo==0.8.1
+
+# Cryptographie
+pycryptodomex==3.19.0
+cryptography==41.0.7
+bcrypt==4.0.1
+
+# Presse-papier multiplateforme
+pyperclip==1.8.2
+
+# Génération des PDF
+reportlab==4.0.4
+
+# Développement (optionnel pour les builds)
+pyinstaller==5.13.0
+
+# Dépendances spécifiques Windows
+pywin32==306

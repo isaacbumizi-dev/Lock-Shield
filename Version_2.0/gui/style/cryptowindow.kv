@@ -94,6 +94,8 @@
                     group: "crypt"
                     size_hint: .5, 1
                     _no_ripple_effect: True
+                    color_active: get_color_from_hex("FEA674")
+                    color_inactive: "lightgray"
                 MDLabel:
                     text: "Chiffrement"
                     valign: "center"
@@ -104,6 +106,8 @@
                     group: "crypt"
                     size_hint: .5, 1
                     _no_ripple_effect: True
+                    color_active: get_color_from_hex("FEA674")
+                    color_inactive: "lightgray"
                 MDLabel:
                     text: "Déchiffrement" 
                     valign: "center"
@@ -124,6 +128,8 @@
                     active: True
                     size_hint: .5, 1
                     _no_ripple_effect: True
+                    color_active: get_color_from_hex("FEA674")
+                    color_inactive: "lightgray"
                     on_active: root.IS_PROCESS_FILE = True if self.active == True else False
                 MDLabel:
                     text: "Fichier"
@@ -135,6 +141,8 @@
                     group: "target"
                     size_hint: .5, 1
                     _no_ripple_effect: True
+                    color_active: get_color_from_hex("FEA674")
+                    color_inactive: "lightgray"
                     on_active: root.IS_PROCESS_FILE = False if self.active == True else True
                 MDLabel:
                     text: "Dossier"
@@ -328,6 +336,8 @@
                             group: "cipher"
                             active: True
                             size_hint: .5, 1
+                            color_active: get_color_from_hex("FEA674")
+                            color_inactive: "lightgray"
                             _no_ripple_effect: True
                             on_active: root.on_action()
 
@@ -341,6 +351,8 @@
                             group: "cipher"
                             active: False
                             size_hint: .5, 1
+                            color_active: get_color_from_hex("FEA674")
+                            color_inactive: "lightgray"
                             _no_ripple_effect: True
                             on_active: root.on_action()
 
@@ -353,6 +365,8 @@
                             group: "cipher"
                             active: False
                             size_hint: .5, 1
+                            color_active: get_color_from_hex("FEA674")
+                            color_inactive: "lightgray"
                             _no_ripple_effect: True
                             on_active: root.on_action()
 
@@ -386,6 +400,8 @@
                             group: "key"
                             active: True
                             size_hint: .5, 1
+                            color_active: get_color_from_hex("FEA674")
+                            color_inactive: "lightgray"
                             _no_ripple_effect: True
                             on_active: root.on_action()
 
@@ -398,6 +414,8 @@
                             group: "key"
                             active: False
                             size_hint: .5, 1
+                            color_active: get_color_from_hex("FEA674")
+                            color_inactive: "lightgray"
                             _no_ripple_effect: True
                             on_active: root.on_action()
 
@@ -410,6 +428,8 @@
                             group: "key"
                             active: False
                             size_hint: .5, 1
+                            color_active: get_color_from_hex("FEA674")
+                            color_inactive: "lightgray"
                             _no_ripple_effect: True
                             on_active: root.on_action()
 
@@ -590,5 +610,16 @@
     title_size: 17
     background_color: get_color_from_hex("#606060")
     separator_color: get_color_from_hex("#463C4B")
-    size_hint: (.5, .85)
+    size_hint: (None, None)
+    size: (550, 620)
     auto_dismiss: True
+
+    MDBoxLayout:
+        size_hint: 1, 1
+        padding: [5, ]
+        MDLabel:
+            text: app.ABOUT_CONTENT
+            halign: "justify"
+            valign: "center"
+            size_hint: 1, 1
+

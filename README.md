@@ -38,7 +38,16 @@
 
 ### Captures d'écran
 
-
+![Page de configuration des identifiants de connexion](capture/cap1.png)
+![Page de connexion](capture/cap2.png)
+![Page de restauration du mot de passe](capture/cap3.png)
+![Page principal des opérations](capture/cap4.png)
+![Configuration des paramètres de chiffrement](capture/cap5.png)
+![Configuration des paramètres de déchiffrement](capture/cap6.png)
+![Page de l'historique des opérations](capture/cap7.png)
+![Page d'exportation de l'historique vers PDF](capture/cap8.png)
+![Page de restauration des clés de chiffrement](capture/cap9.png)
+![Page d'A Propos de l'application](capture/cap10.png)
 
 ## Installation
 ### Prérequis
@@ -50,8 +59,8 @@
 
 - Cloner le dépôt avec 
 ```bash
-git clone clone https://github.com/isaacbumizi-dev/Lock-Shield.git
-cd Lock-Shield
+git clone clone https://github.com/isaacbumizi-dev/lock-shield.git
+cd lock-shield/Version_2.0
 ```
 - Créer un environnement virtuel (recommandé)
 ```bash
@@ -75,7 +84,7 @@ python main.py
 ### Méthode 2: Installation Rapide
 ```bash
 # En une seule commande
-git clone clone https://github.com/isaacbumizi-dev/Lock-Shield.git && cd Lock-Shield && pip install -r requirements.txt && python main.py
+git clone clone https://github.com/isaacbumizi-dev/lock-shield.git && cd lock-shield/Version_2.0 && pip install -r requirements.txt && python main.py
 ```
 
 ## Utilisation
@@ -211,7 +220,6 @@ lock-shield/
 │       └── restoration.kv
 │
 ├── assets/                          # Ressources
-│   ├── fonts/                       # Polices personnalisées
 │   ├── images/                      # Images et icônes
 │
 ├── data/                            # Données utilisateur (généré)
@@ -227,7 +235,7 @@ Processus de Contribution
 1. Fork le projet
 2. Clone votre fork
 ```bash
-git clone https://github.com/isaacbumizi-dev/Lock-Shield.git
+git clone clone https://github.com/isaacbumizi-dev/lock-shield.git
 ```
 
 3. Créez une branche pour votre fonctionnalité

@@ -1,0 +1,32 @@
+#: import get_color_from_hex kivy.utils.get_color_from_hex
+
+#: import Restoration gui.screen.password_restoration.Restoration
+#: import CryptoWindow gui.screen.cryptoWindow.CryptoWindow
+#: import UserConfiguration gui.screen.user_configuration.UserConfiguration
+#: import Authentification gui.screen.authentication.Authentification
+
+
+<ScreenNavigator>:
+    Screen:
+        name: "userConfigScreen"
+        on_leave: self.clear_widgets()
+        UserConfiguration:
+
+    Screen:
+        name: "authentificationScreen"
+        Authentification:
+
+    Screen:
+        name: "passwordRestorationScreen"
+        Restoration:
+
+    Screen:
+        name: "mainScreen"
+        CryptoWindow:
+
+
+
+
+
+
+
