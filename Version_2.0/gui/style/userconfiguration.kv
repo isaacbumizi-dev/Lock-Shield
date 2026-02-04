@@ -1,0 +1,111 @@
+#: import get_color_from_hex kivy.utils.get_color_from_hex
+
+<UserConfiguration>:
+    size_hint: 1, 1
+    md_bg_color: get_color_from_hex("#111111")
+    MDCard:
+        radius: [5,]
+        elevation: 1
+        md_bg_color: get_color_from_hex("#2C2C2C")
+        size_hint: None, None
+        size: (754.65, 489.0)
+        pos_hint: {"center_x": .5, "center_y": .5}
+
+        MDRelativeLayout:
+            MDIcon:
+                icon: "shield-lock-outline"
+                color: get_color_from_hex("#CCCCCC")
+                font_size: '60dp'
+                pos_hint: {"center_x": .5, "center_y": .8}
+
+            MDTextField:
+                id: color_id
+                size_hint_x: .9
+                multiline: False
+                mode: "rectangle"
+                radius: [2, ]
+                hint_text: "Couleur préferée (*)"
+                pos_hint: {"center_x": .5, "center_y": .55}
+                on_text_validate: town_id.focus = True
+
+            MDTextField:
+                id: town_id
+                size_hint_x: .9
+                multiline: False
+                mode: "rectangle"
+                radius: [2, ]
+                hint_text: "Ville de naissance (*)"
+                pos_hint: {"center_x": .5, "center_y": .40}
+                on_text_validate: language_id.focus = True
+
+            MDTextField:
+                id: language_id
+                size_hint_x: .9
+                multiline: False
+                mode: "rectangle"
+                radius: [2, ]
+                hint_text: "Première langue (*)"
+                pos_hint: {"center_x": .5, "center_y": .25}
+                on_text_validate: school_id.focus = True
+
+            MDTextField:
+                id: school_id
+                size_hint_x: .9
+                multiline: False
+                mode: "rectangle"
+                radius: [2, ]
+                hint_text: "Première école (*)"
+                pos_hint: {"center_x": .5, "center_y": .10}
+                on_text_validate: password_id.focus = True
+
+
+        MDSeparator:
+            line_color: get_color_from_hex("#ECF2F9")
+            line_width: 0.5
+            orientation: "vertical"
+
+        MDRelativeLayout:
+            MDIcon:
+                icon: "shield-lock-outline"
+                color: get_color_from_hex("#CCCCCC")
+                font_size: '60dp'
+                pos_hint: {"center_x": .5, "center_y": .8}
+
+            MDTextField:
+                id: password_id
+                size_hint_x: .9
+                multiline: False
+                mode: "rectangle"
+                password: True
+                radius: [2, ]
+                hint_text: "Mot de passe (*)"
+                pos_hint: {"center_x": .5, "center_y": .55}
+                on_text_validate: password_conf_id.focus = True
+
+            MDTextField:
+                id: password_conf_id
+                size_hint_x: .9
+                multiline: False
+                mode: "rectangle"
+                password: True
+                radius: [2, ]
+                hint_text: "Confirmation du Mot de passe (*)"
+                pos_hint: {"center_x": .5, "center_y": .40}
+
+            MDIconButton:
+                icon: "eye"
+                _no_ripple_effect: True
+                theme_icon_color: "Custom"
+                icon_color: app.theme_cls.primary_color
+                pos_hint: {"center_x": .9, "center_y": .39}
+                on_press:
+                    self.icon = "eye" if self.icon == "eye-off" else "eye-off"
+                    password_conf_id.password = True if self.icon == "eye" else False
+                    password_id.password = True if self.icon == "eye" else False
+
+
+            MDRaisedButton:
+                text: "Valider"
+                size_hint_x: .8
+                pos_hint: {"center_x": .5, "center_y": .20}
+                on_release: root.save_user_config()
