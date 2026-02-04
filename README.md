@@ -50,8 +50,8 @@
 
 - Cloner le dépôt avec 
 ```bash
-git clone clone https://github.com/isaacbumizi-dev/lock-shield
-cd lock-shield
+git clone clone https://github.com/isaacbumizi-dev/Lock-Shield.git
+cd Lock-Shield
 ```
 - Créer un environnement virtuel (recommandé)
 ```bash
@@ -75,7 +75,7 @@ python main.py
 ### Méthode 2: Installation Rapide
 ```bash
 # En une seule commande
-git clone clone https://github.com/isaacbumizi-dev/lock-shield && cd lock-shield && pip install -r requirements.txt && python main.py
+git clone clone https://github.com/isaacbumizi-dev/Lock-Shield.git && cd Lock-Shield && pip install -r requirements.txt && python main.py
 ```
 
 ## Utilisation
@@ -227,7 +227,7 @@ Processus de Contribution
 1. Fork le projet
 2. Clone votre fork
 ```bash
-git clone clone clone https://github.com/isaacbumizi-dev/lock-shield
+git clone https://github.com/isaacbumizi-dev/Lock-Shield.git
 ```
 
 3. Créez une branche pour votre fonctionnalité
