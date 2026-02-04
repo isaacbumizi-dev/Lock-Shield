@@ -2,10 +2,10 @@ import os
 import time
 import threading
 
-from kivy.metrics import dp
 from kivymd.app import MDApp
 from kivy.uix.popup import Popup
 from kivy.clock import mainthread
+from kivymd.uix.label import MDLabel
 from kivymd.uix.dialog import MDDialog
 from kivy.utils import get_color_from_hex
 from kivy.properties import StringProperty
@@ -20,7 +20,7 @@ from core.crypto.cryptoEngine import (
     derive_crypto_key,
     get_algorithm_signature
 )
-from kivymd.uix.label import MDLabel
+
 
 
 class EncryptionOptions(MDBoxLayout):
@@ -423,6 +423,7 @@ class CryptoWindow(MDBoxLayout):
                 self._update_operation_label_text(f"Chiffrement du fichier {file_name} en cours...")
                 derived_encryption_key = derive_crypto_key(encryption_key, self.encryption_key_size)
 
+                self._update_operation_progress_bar(0)
                 encryption_result = encrypt_file(
                     file=file_path,
                     encryption_key=derived_encryption_key,
@@ -496,6 +497,7 @@ class CryptoWindow(MDBoxLayout):
                 self._update_operation_label_text(f"Déchiffrement du fichier {file_name} en cours...")
                 decryption_key = derive_crypto_key(decryption_key, key_lenght)
 
+                self._update_operation_progress_bar(0)
                 decryption_result = decrypt_file(
                     file=file_path,
                     decryption_key=decryption_key,

@@ -51,13 +51,10 @@ class MainApplicationApp(MDApp):
         pyi_splash.close()
     else:
         BASE_DIR = EXC_DIR = os.path.dirname(os.path.abspath(__file__))
-
+    
     DATA_STORGAGE = os.path.join(EXC_DIR, 'data')
 
-    PRIMARY_FONT = os.path.join(BASE_DIR, 'assets', 'fonts', '12 POST ANTIQUA BOLD   07554.TTF')
-    SECONDARY_FONT = os.path.join(BASE_DIR, 'assets', 'fonts', '70214___.TTF')
     APP_ICON = os.path.join(BASE_DIR, 'assets', 'images', 'profil.png')
-    MENU_ICON = os.path.join(BASE_DIR, 'assets', 'images', 'clipart365828.png')
 
     SCREEN_MANAGER = ObjectProperty(None)
     APPLICATION_NAME = "Lock Shield - Gestionnaire de Sécurité"
@@ -73,7 +70,34 @@ class MainApplicationApp(MDApp):
         separator_color=(0,0,0,0),
         auto_dismiss=False
     )
+
+    ABOUT_CONTENT = """
+    A PROPOS DE LOCK SHIELD - VERSION 2.0
     
+    Application de sécurité complète pour le chiffrement et la protection de vos fichiers sensibles.
+    
+    CARACTERISTIQUES PRINCIPALES
+    . Chiffrement AES 256-bit sécurisé
+    . Gestionnaire de fichiers intégré
+    . Historique détaillé des opérations
+    . Sauvegarde automatique des clés
+    . Export PDF de l'historique des opérations
+    
+    TECHNOLOGIES UTILISEES
+    Python - Kivy - KivyMD - SQLite - Cryptographie AES
+    
+    DEVELOPPE PAR
+    Isaac Bumizi
+    Passionné de l'informatique et de la cybersécurité
+    
+    SUPPORT TECHNIQUE
+    Email: isaac.bumizi.officiel@gmail.com
+    GitHub: https://github.com/isaacbumizi-dev
+    Repository GitHub: https://github.com/isaacbumizi-dev/Lock-Shield.git
+    
+    Licence MIT - Open Source
+    © 2026 Lock Shield - Tous droits réservés
+    """
     def build(self):
         self.title = self.APPLICATION_NAME
         self.icon = self.APP_ICON
