@@ -1,0 +1,61 @@
+<Authentification>:
+    size_hint: 1, 1
+    md_bg_color: get_color_from_hex("#111111")
+    MDCard:
+        radius: [5,]
+        elevation: 1
+        md_bg_color: get_color_from_hex("#2C2C2C")
+        size_hint: None, None
+        size: (522.45, 358.6)
+        pos_hint: {"center_x": .5, "center_y": .5}
+
+        MDBoxLayout:
+            orientation: "horizontal"
+            size: self.parent.size
+            pos: self.parent.pos
+            padding: [0,]
+            spacing: 5
+
+            MDRelativeLayout:
+                MDIcon:
+                    icon: "account-circle-outline"
+                    color: get_color_from_hex("#CCCCCC")
+                    font_size: '60dp'
+                    pos_hint: {"center_x": .5, "center_y": .8}
+
+                MDTextField:
+                    id: password_input
+                    size_hint_x: .9
+                    multiline: False
+                    mode: "rectangle"
+                    password: True
+                    radius: [3, ]
+                    focus: True
+                    hint_text: "Mot de passe"
+                    pos_hint: {"center_x": .5, "center_y": .50}
+                    on_text_validate:  root.authenticate_user(self.text)
+
+                MDIconButton:
+                    icon: "eye"
+                    _no_ripple_effect: True
+                    theme_icon_color: "Custom"
+                    icon_color: app.theme_cls.primary_color
+                    pos_hint: {"center_x": .9, "center_y": .49}
+                    on_press:
+                        self.icon = "eye" if self.icon == "eye-off" else "eye-off"
+                        password_input.password = True if self.icon == "eye" else False
+
+                MDRaisedButton:
+                    text: "Connexion"
+                    size_hint_x: .8
+                    pos_hint: {"center_x": .5, "center_y": .20}
+                    on_release: root.authenticate_user(password_input.text)
+
+    MDTextButton:
+        text: "Mot de passe oublié ?"
+        background_color: 0, 0, 0, 0
+        color: "white"
+        font_size: 13
+        size_hint: .5, .06
+        pos_hint: {"center_x": .5, "center_y": .05}
+        on_release: app.SCREEN_MANAGER.push("passwordRestorationScreen")

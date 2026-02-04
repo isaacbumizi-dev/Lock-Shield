@@ -1,0 +1,594 @@
+#: import Factory kivy.factory.Factory
+#: import get_color_from_hex kivy.utils.get_color_from_hex
+#: import HistoryWindow gui.screen.history.HistoryWindow
+#: import RestorationWindow gui.screen.restoration.RestorationWindow
+#: import CustomFileChooser gui.components.fileChooser.CustomFileChooser
+
+
+<CryptoWindow>:
+    orientation: "vertical"
+    MDRelativeLayout:
+        orientation: "horizontal"
+        size_hint: 1, .06
+        padding: [10, 0, 10, 0]
+        spacing: 5
+        radius: [0, 0, -1, -1]
+        md_bg_color: get_color_from_hex("#2C2C2C")
+
+        MDIconButton:
+            icon: "logout-variant"
+            pos_hint: {"x": 0, "center_y": .5}
+            _no_ripple_effect: True
+            on_release: Factory.logOutPopUp().open()
+
+        MDLabel:
+            text: "Lock Shield"
+            text_size: self.size
+            halign: "center"
+            valign: "center"
+            bold: True
+            color: app.theme_cls.primary_color
+            font_size: "20dp"
+            pos_hint: {"center_x": .5, "center_y": .5}
+
+        MDIconButton:
+            icon: "menu"
+            pos_hint: {"right": 1, "center_y": .5}
+            _no_ripple_effect: True
+            on_release: Factory.MenuPopUp().open()
+
+
+    MDBoxLayout:
+        orientation: "vertical"
+        spacing: 3
+        padding: [0, 5, 0, 5]
+        canvas.before:
+            Color:
+                rgba: (0.122, 0.627, 0.333, .8)
+            Line:
+                points: (2,2, 2,self.height-1, self.width-2,self.height-1, self.width-2,2, 2,2)
+
+        MDLabel:
+            text: "Sélectionnez un fichier ou un dossier"
+            text_size: self.size
+            halign: "center"
+            valign: "center"
+            bold: True
+            font_size: 15
+            size_hint: 1, .08
+            color: app.theme_cls.primary_color
+            pos_hint: {"center_x": .5, "center_y": .5}
+
+        BoxLayout:
+            size_hint: 1, .8
+            padding: [0, 0, 7, 0]
+            CustomFileChooser:
+                id: filechooser_id
+
+        MDBoxLayout:
+            padding: [20, 3, 20, 0]
+            size_hint: 1, .04
+            canvas.before:
+                Color:
+                    rgba: get_color_from_hex("#2C2C2C")
+                Line:
+                    width: 1.05
+                    points: (self.x+50,self.y + self.height/2, self.width-50, self.y + self.height/2)
+
+        MDRelativeLayout:
+            padding: [10, 2, 10, 2]
+            size_hint: 1, None
+            height: 51.78
+
+            MDBoxLayout:
+                radius: [5, ]
+                orientation: "horizontal"
+                size_hint: None, 1
+                width: 360
+                pos_hint: {"right": .497, "center_y": .5}
+                md_bg_color: get_color_from_hex("#242729")
+
+                MDCheckbox:
+                    id: enc_operation_checkbox
+                    active: True
+                    group: "crypt"
+                    size_hint: .5, 1
+                    _no_ripple_effect: True
+                MDLabel:
+                    text: "Chiffrement"
+                    valign: "center"
+                    halign: "left"
+
+                MDCheckbox:
+                    id: dec_operation_checkbox
+                    group: "crypt"
+                    size_hint: .5, 1
+                    _no_ripple_effect: True
+                MDLabel:
+                    text: "Déchiffrement" 
+                    valign: "center"
+                    halign: "left"
+
+            MDBoxLayout:
+                radius: [5, ]
+                orientation: "horizontal"
+                size_hint: None, 1
+                width: 360
+                padding: [0, 0, 5, 0]
+                pos_hint: {"x": .5, "center_y": .5}
+                md_bg_color: get_color_from_hex("#242729")
+
+                MDCheckbox:
+                    id: file_target_checkbox
+                    group: "target"
+                    active: True
+                    size_hint: .5, 1
+                    _no_ripple_effect: True
+                    on_active: root.IS_PROCESS_FILE = True if self.active == True else False
+                MDLabel:
+                    text: "Fichier"
+                    valign: "center"
+                    halign: "left"
+
+                MDCheckbox:
+                    id: folder_target_checkbox
+                    group: "target"
+                    size_hint: .5, 1
+                    _no_ripple_effect: True
+                    on_active: root.IS_PROCESS_FILE = False if self.active == True else True
+                MDLabel:
+                    text: "Dossier"
+                    valign: "center"
+                    halign: "left"
+
+
+        MDBoxLayout:
+            orientation: "vertical"
+            size_hint: 1, .8
+            padding: [10, 10, 10, 5]
+
+            MDRaisedButton:
+                text: "Options de Configuration"
+                size_hint_x: .65
+                pos_hint: {"center_x": .5}
+                on_release: root.open_crypto_config_dialog()
+
+            MDBoxLayout:
+                orientation: "vertical"
+                spacing: 3
+                padding: [0, 20, 0, 0]
+                spacing: 10
+
+                MDBoxLayout:
+                    orientation: "vertical"
+                    MDRelativeLayout:
+                        MDLabel:
+                            id: operation_progress_label
+                            text: ""
+                            valign: "center"
+                            halign: "center"
+                            pos_hint: {"center_x": .5, "center_y": .5}
+
+                        MDLabel:
+                            id: count_target_id
+                            text: ""
+                            valign: "center"
+                            halign: "center"
+                            size_hint: None, .3
+                            width: dp(100)
+                            font_size: 13
+                            theme_text_color: "Custom"
+                            text_color: app.theme_cls.primary_color
+                            pos_hint: {"right": .99, "center_y": .5}
+
+                    MDProgressBar:
+                        id: operation_progress_bar
+                        min: 0
+                        max: 100
+                        opacity: 0
+                        disabled: True
+                        size_hint: .8, None
+                        height: dp(5)
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+
+                MDRelativeLayout:
+                    size_hint: 1, .5
+                    MDBoxLayout:
+                        size_hint: None, None
+                        size: (456.4, 44.2)
+                        pos_hint: {"center_x": .5, "center_y": .5}
+                        MDRaisedButton:
+                            id: launch_button_id
+                            text: "Demarrer"
+                            size_hint: 1, 1
+                            md_bg_color: get_color_from_hex("D3510D")
+                            pos_hint: {"center_x": .5, "center_y": .5}
+                            on_press: root.run_services(selected_path=filechooser_id.get_selected_path())
+
+
+<DecryptionOptions>:
+    radius: [0,0,5,5]
+    md_bg_color: get_color_from_hex("#2C2C2C")
+    size_hint: 1, 1
+    pos_hint: {"center_x": .5, "center_y": .5}
+
+    MDBoxLayout:
+        orientation: "horizontal"
+        size: self.parent.size
+        pos: self.parent.pos
+        padding: [0,]
+        spacing: 5
+
+        MDRelativeLayout:
+            MDIcon:
+                icon: root.LAYOUT_ICON
+                color: get_color_from_hex("#CCCCCC")
+                font_size: '60dp'
+                pos_hint: {"center_x": .5, "center_y": .8}
+
+            MDTextField:
+                id: dec_key
+                size_hint_x: .9
+                multiline: False
+                mode: "rectangle"
+                password: True
+                radius: [3, ]
+                focus: True
+                hint_text: "Clé de déchiffrement"
+                pos_hint: {"center_x": .5, "center_y": .50}
+                on_text: root.on_textEdit()
+
+            MDIconButton:
+                icon: "eye"
+                _no_ripple_effect: True
+                theme_icon_color: "Custom"
+                icon_color: app.theme_cls.primary_color
+                pos_hint: {"center_x": .9, "center_y": .49}
+                on_press:
+                    self.icon = "eye" if self.icon == "eye-off" else "eye-off"
+                    dec_key.password = True if self.icon == "eye" else False
+
+            MDBoxLayout:
+                size_hint_x: .9
+                spacing: dp(10)
+                orientation: "horizontal"
+                pos_hint: {"center_x": .5, "center_y": .10}
+
+                MDRaisedButton:
+                    text: "Annuler"
+                    size_hint_x: 1
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    on_release: root.close_popup()
+
+                MDRaisedButton:
+                    id: validate_button
+                    text: "Valider"
+                    size_hint_x: 1
+                    disabled: True
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    on_release: root.define_dec_key()
+
+
+
+<EncryptionOptions>:
+    radius: [0,0,5,5]
+    md_bg_color: get_color_from_hex("#2C2C2C")
+    size_hint: 1, 1
+    pos_hint: {"center_x": .5, "center_y": .5}
+
+    MDBoxLayout:
+        orientation: "horizontal"
+        size: self.parent.size
+        pos: self.parent.pos
+        padding: [0,]
+        spacing: 5
+
+        MDBoxLayout:
+            orientation: "vertical"
+            spacing: '15dp'
+            padding: [5, 10, 5, 5]
+            MDIcon:
+                icon: root.LAYOUT_ICON
+                color: get_color_from_hex("#CCCCCC")
+                font_size: '60dp'
+                pos_hint: {"center_x": .5, "center_y": .5}
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                spacing: 7
+                size_hint: 1, 1
+                MDBoxLayout:
+                    orientation: "vertical"
+                    spacing: 10
+                    padding: [15, 3, 15, 5]
+                    canvas.before:
+                        Color:
+                            rgba: 1, 1, 1, .2
+                        Line:
+                            rectangle: (self.x,self.y, self.width, self.height)
+
+                    MDLabel:
+                        text: "Algorithme de chiffrement"
+                        valign: "center"
+                        halign: "center"
+                        size_hint: 1, .2
+
+                    MDSeparator:
+
+                    MDGridLayout:
+                        cols: 2
+                        row: 3
+                        MDLabel:
+                            text: "AES-CBC"
+                            valign: "center"
+                            halign: "left"
+                        MDCheckbox:
+                            id: cbc_checkbox
+                            group: "cipher"
+                            active: True
+                            size_hint: .5, 1
+                            _no_ripple_effect: True
+                            on_active: root.on_action()
+
+
+                        MDLabel:
+                            text: "AES-CFB"
+                            valign: "center"
+                            halign: "left"
+                        MDCheckbox:
+                            id: cfb_checkbox
+                            group: "cipher"
+                            active: False
+                            size_hint: .5, 1
+                            _no_ripple_effect: True
+                            on_active: root.on_action()
+
+                        MDLabel:
+                            text: "AES-OFB"
+                            valign: "center"
+                            halign: "left"
+                        MDCheckbox:
+                            id: ofb_checkbox
+                            group: "cipher"
+                            active: False
+                            size_hint: .5, 1
+                            _no_ripple_effect: True
+                            on_active: root.on_action()
+
+                MDBoxLayout:
+                    orientation: "vertical"
+                    spacing: 10
+                    padding: [15, 3, 15, 5]
+                    canvas.before:
+                        Color:
+                            rgba: 1, 1, 1, .2
+                        Line:
+                            rectangle: (self.x,self.y, self.width, self.height)
+
+                    MDLabel:
+                        text: "Longeur de la clé de chiffrement"
+                        valign: "center"
+                        halign: "center"
+                        size_hint: 1, .2
+
+                    MDSeparator:
+
+                    MDGridLayout:
+                        cols: 2
+                        row: 3
+                        MDLabel:
+                            text: "128 bits"
+                            valign: "center"
+                            halign: "left"
+                        MDCheckbox:
+                            id: 128_checkbox
+                            group: "key"
+                            active: True
+                            size_hint: .5, 1
+                            _no_ripple_effect: True
+                            on_active: root.on_action()
+
+                        MDLabel:
+                            text: "192 bits"
+                            valign: "center"
+                            halign: "left"
+                        MDCheckbox:
+                            id: 192_checkbox
+                            group: "key"
+                            active: False
+                            size_hint: .5, 1
+                            _no_ripple_effect: True
+                            on_active: root.on_action()
+
+                        MDLabel:
+                            text: "256 bits"
+                            valign: "center"
+                            halign: "left"
+                        MDCheckbox:
+                            id: 256_checkbox
+                            group: "key"
+                            active: False
+                            size_hint: .5, 1
+                            _no_ripple_effect: True
+                            on_active: root.on_action()
+
+            MDRelativeLayout:
+                size_hint: 1, None
+                height: '90dp'
+                padding_left: '10dp'
+                pos_hint: {"center_x": .5, "center_y": .3}
+
+                MDTextField:
+                    id: enc_key
+                    size_hint_x: .7
+                    multiline: False
+                    mode: "rectangle"
+                    password: True
+                    radius: [3, ]
+                    focus: True
+                    hint_text: "Clé de chiffrement"
+                    pos_hint: {"x": .06, "center_y": .5}
+                    on_text: root.on_action()
+
+                MDIconButton:
+                    icon: "eye"
+                    _no_ripple_effect: True
+                    theme_icon_color: "Custom"
+                    icon_color: app.theme_cls.primary_color
+                    pos_hint: {"center_x": .73, "center_y": .5}
+                    on_press:
+                        self.icon = "eye" if self.icon == "eye-off" else "eye-off"
+                        enc_key.password = True if self.icon == "eye" else False
+
+                MDRaisedButton:
+                    text: "Générer une clé"
+                    size_hint_y: .5
+                    pos_hint: {"right": .94, "center_y": .5}
+                    md_bg_color: get_color_from_hex("#894F45")
+                    on_release: root.generate_encryption_key()
+
+            MDBoxLayout:
+                size_hint: .95, .22
+                spacing: dp(10)
+                orientation: "horizontal"
+                pos_hint: {"center_x": .5, "center_y": .10}
+
+                MDRaisedButton:
+                    text: "Fermer"
+                    size_hint_x: 1
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    on_release: root.close_popup()
+
+                MDRaisedButton:
+                    id: validate_button
+                    text: "Valider"
+                    size_hint_x: 1
+                    disabled: True
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    on_release: root.validate_parameters()
+
+
+
+
+<logOutPopUp@Popup>:
+    title: " "
+    size_hint: None, None
+    size: (522.45, 180)
+    auto_dismiss: False
+    background_color: (0,0,0,0)
+    separator_color: get_color_from_hex("#FEA674")
+    pos_hint: {"center_x": .5, "center_y": .5}
+
+    MDBoxLayout:
+        md_bg_color: get_color_from_hex("#2C2C2C")
+        orientation: "vertical"
+        size: self.parent.size
+        pos: self.parent.pos
+        padding: [0,]
+        spacing: 5
+        radius: [0, 0, 5, 5]
+
+        MDLabel:
+            text: "Voulez-vous vraiment vous deconnectez ?"
+            valign: "center"
+            halign: "center"
+            font_size: '16dp'
+            color: get_color_from_hex("#CCCCCC")
+            pos_hint: {"center_x": .5, "center_y": .9}
+
+        MDBoxLayout:
+            size_hint_x: .95
+            spacing: dp(10)
+            orientation: "horizontal"
+            pos_hint: {"center_x": .5, "center_y": .10}
+
+            MDRaisedButton:
+                text: "Non"
+                size_hint_x: 1
+                pos_hint: {"center_x": .5, "center_y": .5}
+                on_release: root.dismiss()
+
+            MDRaisedButton:
+                text: "Oui"
+                size_hint_x: 1
+                pos_hint: {"center_x": .5, "center_y": .5}
+                on_release:
+                    root.dismiss()
+                    app.SCREEN_MANAGER.pop()
+
+<MenuPopUp@Popup>:
+    title: "Menu"
+    title_align: "center"
+    title_color: get_color_from_hex("#FFFFFF")
+    title_size: 17
+    background_color: get_color_from_hex("#606060")
+    separator_color: get_color_from_hex("#463C4B")
+    size_hint: (.7, .25)
+
+    MDBoxLayout:
+        padding: 3, 5, 3, 5
+        spacing: 5
+        MDRaisedButton:
+            text: "Historique"
+            font_size: "15dp"
+            size_hint: 1, 1
+            md_bg_color: get_color_from_hex('#1D1F26')
+            on_release:
+                root.dismiss()
+                Factory.History_PopUp().open()
+
+        MDRaisedButton:
+            text: "Sauvegarde et Restauration"
+            font_size: "15dp"
+            size_hint: 1, 1
+            md_bg_color: get_color_from_hex('#1D1F26')
+            on_release:
+                root.dismiss()
+                Factory.BackupAndRestore_PopUp().open()
+
+        MDRaisedButton:
+            text: "A propos"
+            font_size: "15dp"
+            size_hint: 1, 1
+            md_bg_color: get_color_from_hex('#1D1F26')
+            on_release:
+                root.dismiss()
+                Factory.About_popUp().open()
+
+
+<History_PopUp@Popup>:
+    title: "Historique des opérations"
+    title_align: "center"
+    title_color: get_color_from_hex("#FFFFFF")
+    title_size: 17
+    background_color: get_color_from_hex("#606060")
+    separator_color: get_color_from_hex("#463C4B")
+    size_hint: (None, None)
+    size: (812.6, 652)
+    auto_dismiss: False
+
+    HistoryWindow:
+
+
+<BackupAndRestore_PopUp@Popup>
+    title: "Sauvegarde et Restauration"
+    title_align: "center"
+    title_color: get_color_from_hex("#FFFFFF")
+    title_size: 17
+    background_color: get_color_from_hex("#606060")
+    separator_color: get_color_from_hex("#463C4B")
+    size_hint: (1, 1)
+    auto_dismiss: False
+
+    RestorationWindow:
+
+<About_popUp@Popup>:
+    title: "A propos"
+    title_align: "center"
+    title_color: get_color_from_hex("#FFFFFF")
+    title_size: 17
+    background_color: get_color_from_hex("#606060")
+    separator_color: get_color_from_hex("#463C4B")
+    size_hint: (.5, .85)
+    auto_dismiss: True

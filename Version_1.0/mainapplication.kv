@@ -1,0 +1,336 @@
+#: import get_color_from_hex kivy.utils.get_color_from_hex
+#: import Main_Window_Widget cryptowindow
+
+<ScreenNavigator>:
+    Screen:
+        name: "createUserScreen"
+        canvas.before:
+            Color:
+                rgba: (0.122, 0.627, 0.333, .08)
+            Rectangle:
+                size: self.size
+                pos: self.pos
+
+
+        RelativeLayout:
+            Image:
+                source: app.APP_ICON
+                size_hint: .25, .25
+                pos_hint: {"center_x": .5, "center_y": .85}
+            Label:
+                text: "Créer un mot de passe de sécurité"
+                font_size: 18
+                size_hint: .5, .3
+                pos_hint: {"center_x": .5, "center_y": .7}
+
+            GridLayout:
+                cols: 2
+                row: 2
+                spacing: 4
+                size_hint: .5, .1
+                pos_hint: {"center_x": .35, "center_y": .58}
+                Label:
+                    text: "Taper le mot de passe"
+                    text_size: self.size
+                    valign: "center"
+                    halign: "left"
+                TextInput:
+                    id: enter_pwd
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    multiline: False
+                    password: True
+                Label:
+                    text: "Confirmer le mot de passe"
+                    text_size: self.size
+                    valign: "center"
+                    halign: "left"
+                TextInput:
+                    id: confirm_pwd
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    multiline: False
+                    password: True
+
+            CustomFillButton:
+                text: "Definir le mot de passe"
+                size_hint: .3, .07
+                background_color: (1, 1, 1, .4)
+                pos_hint: {"x": .65, "center_y": .58}
+                on_release: app.define_masterPassword(str(enter_pwd.text), str(confirm_pwd.text))
+
+            Button:
+                text: "Afficher les mots de passe"
+                background_color: 0, 0, 0, 0
+                size_hint: .3, .05
+                pos_hint: {"center_x": .5, "center_y": .48}
+                on_press:
+                    self.text = "Afficher le mot de passe" if enter_pwd.password == False else "Cacher le mot de passe"
+                    enter_pwd.password = confirm_pwd.password = True if enter_pwd.password == False else False
+
+
+            Label:
+                text: "Questions de sécurité"
+                font_size: 18
+                size_hint: .5, .3
+                pos_hint: {"center_x": .5, "center_y": .38}
+
+            GridLayout:
+                cols: 2
+                row: 3
+                spacing: 4
+                size_hint: .5, .23
+                pos_hint: {"center_x": .35, "center_y": .23}
+                Label:
+                    text: "Quel est votre couleur préférée ?"
+                    text_size: self.size
+                    valign: "center"
+                    halign: "left"
+                TextInput:
+                    id: q1_id
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    multiline: False
+                Label:
+                    text: "Quel est le nom de votre ville natale ?"
+                    text_size: self.size
+                    valign: "center"
+                    halign: "left"
+                TextInput:
+                    id: q2_id
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    multiline: False
+                Label:
+                    text: "Quel est votre langue maternelle ?"
+                    text_size: self.size
+                    valign: "center"
+                    halign: "left"
+                TextInput:
+                    id: q3_id
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    multiline: False
+                Label:
+                    text: "Quel est le nom de la première école que vous avez frequenté ?"
+                    text_size: self.size
+                    valign: "center"
+                    halign: "left"
+                TextInput:
+                    id: q4_id
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    multiline: False
+
+            CustomFillButton:
+                text: "Definir les questions de sécurité"
+                size_hint: .3, .07
+                background_color: (1, 1, 1, .4)
+                pos_hint: {"x": .65, "center_y": .23}
+                on_release:
+                    app.define_security_issues([str(q1_id.text), str(q2_id.text), str(q3_id.text), str(q4_id.text)])
+
+
+            CustomFillButton:
+                text: "Terminer"
+                size_hint: .3, .07
+                background_color: (1, 1, 1, .4)
+                pos_hint: {"center_x": .5, "center_y": .05}
+                disabled: app.should_disable_button
+                on_release:
+                    app.check_user_exist()
+                    app.encrypt_and_save_master_password()
+
+
+    Screen:
+        name: "authentificationScreen"
+        canvas.before:
+            Color:
+                rgba: (0.122, 0.627, 0.333, .08)
+            Rectangle:
+                size: self.size
+                pos: self.pos
+
+        RelativeLayout:
+            Label:
+                text: "Authentification"
+                font_size: 40
+                size_hint: .5, .3
+                pos_hint: {"center_x": .5, "center_y": .8}
+                font_name: app.SECOND_FONT
+            Label:
+                text: "Saisir le mot de passe"
+                size_hint: .15, .05
+                pos_hint: {"center_x": .5, "center_y": .55}
+            Button:
+                text: "Afficher le mot de passe"
+                background_color: 0, 0, 0, 0
+                size_hint: .3, .05
+                pos_hint: {"center_x": .5, "center_y": .45}
+                on_press:
+                    self.text = "Cacher le mot de passe" if self.text == "Afficher le mot de passe" else "Afficher le mot de passe"
+                    input_id.password = True if self.text == "Afficher le mot de passe" else False
+            TextInput:
+                id: input_id
+                size_hint: .5, .05
+                pos_hint: {"center_x": .5, "center_y": .5}
+                multiline: False
+                password: True
+                on_text_validate: app.isPasswordValid(input_id)
+
+
+            CustomFillButton:
+                text: "Valider"
+                size_hint: .4, .07
+                background_color: (1, 1, 1, .4)
+                pos_hint: {"right": .9, "center_y": .3}
+                on_release: app.isPasswordValid(input_id)
+
+            CustomFillButton:
+                text: "Quitter"
+                size_hint: .4, .07
+                background_color: (1, 1, 1, .4)
+                pos_hint: {"x": .1, "center_y": .3}
+                on_release: app.stop()
+
+            Button:
+                text: "Mot de passe oublié ?"
+                background_color: 0, 0, 0, 0
+                font_size: 13
+                size_hint: .5, .06
+                pos_hint: {"center_x": .5, "center_y": .05}
+                on_release: Factory.restore_passwordPopUp().open()
+
+
+
+    Screen:
+        name: "mainScreen"
+        canvas.before:
+            Color:
+                rgba: (0.122, 0.627, 0.333, .08)
+            Triangle:
+                points: (0,self.height, self.width/2,self.height/2, 0,0)
+            Triangle:
+                points: (self.width,0, self.width/2,self.height/2, self.width,self.height)
+
+        BoxLayout:
+            orientation: "vertical"
+            RelativeLayout:
+                pos: self.pos
+                size_hint: 1, 1
+                Image:
+                    source: app.APP_ICON
+                    size_hint: .5, .5
+                    pos_hint: {"center_x": .5, "center_y": .5}
+
+                ActionView:
+                    size_hint: .04, .04
+                    pos_hint: {"center_x": .025, "center_y": .95}
+                    ActionPrevious:
+                        app_icon: app.LOGOUT_ICON
+                        on_release: app.MANAGER.pop()
+
+                Button:
+                    canvas:
+                        Color:
+                            rgba: 1, 1, 1, 1
+                        Line:
+                            width: 0.2
+                            rectangle:(self.x,self.y, self.width,self.height)
+
+                    text: "Menu"
+                    size_hint: None, None
+                    size: dp(90), dp(30)
+                    background_color: 0, 0, 0, 0
+                    pos_hint: {"center_x": .95, "center_y": .95}
+                    on_release: Factory.ParameterPopUp().open()
+
+
+            BoxLayout:
+                orientation: "horizontal"
+                size_hint: 1, .1
+                padding: [5, 0, 5, 8]
+                spacing: 5
+                pos_hint: {"center_y": .05}
+                CustomFillButton:
+                    text: "Chiffrement"
+                    background_color: (1, 1, 1, .4)
+                    on_release:
+                        app.MANAGER.get_screen("encryption_screen").children[0].set_current_screen_name("encryption_screen")
+                        app.MANAGER.get_screen("encryption_screen").children[0].set_masterPassWord(app.get_masterPassWord())
+                        app.MANAGER.push("encryption_screen")
+                CustomFillButton:
+                    text: "Déchiffrement"
+                    background_color: (1, 1, 1, .4)
+                    on_release:
+                        app.MANAGER.get_screen("decryption_screen").children[0].set_current_screen_name("decryption_screen")
+                        app.MANAGER.get_screen("encryption_screen").children[0].set_masterPassWord(app.get_masterPassWord())
+                        app.MANAGER.push("decryption_screen")
+
+    Screen:
+        name: "encryption_screen"
+        Main_Window_Widget:
+
+    Screen:
+        name: "decryption_screen"
+        Main_Window_Widget:
+
+
+<restore_passwordPopUp@Popup>:
+    title: "Restaurer le mot de passe"
+    title_align: "center"
+    title_size: 17
+    title_color: get_color_from_hex("#FFFFFF")
+    background_color: get_color_from_hex("#606060")
+    size_hint: (.8, .45)
+    separator_color: (1, 1, 1, 1)
+    auto_dismiss: True
+
+    BoxLayout:
+        orientation: "vertical"
+        spacing: 5
+        padding: [5, 5, 5, 2]
+
+        GridLayout:
+            cols: 2
+            row: 3
+            spacing: 4
+            Label:
+                text: "Quel est votre couleur préférée ?"
+                text_size: self.size
+                valign: "center"
+                halign: "left"
+            TextInput:
+                id: q1_id
+                pos_hint: {"center_x": .5, "center_y": .5}
+                multiline: False
+            Label:
+                text: "Quel est le nom de votre ville natale ?"
+                text_size: self.size
+                valign: "center"
+                halign: "left"
+            TextInput:
+                id: q2_id
+                pos_hint: {"center_x": .5, "center_y": .5}
+                multiline: False
+            Label:
+                text: "Quel est votre langue maternelle ?"
+                text_size: self.size
+                valign: "center"
+                halign: "left"
+            TextInput:
+                id: q3_id
+                pos_hint: {"center_x": .5, "center_y": .5}
+                multiline: False
+            Label:
+                text: "Quel est le nom de la première école que vous avez frequenté ?"
+                text_size: self.size
+                valign: "center"
+                halign: "left"
+            TextInput:
+                id: q4_id
+                pos_hint: {"center_x": .5, "center_y": .5}
+                multiline: False
+
+        CustomFillButton:
+            text: "Valider"
+            size_hint: .9, .3
+            background_color: (1, 1, 1, .4)
+            pos_hint: {"center_x": .5, "center_y": .05}
+            on_release:
+                root.dismiss()
+                app.restore_password([str(q1_id.text), str(q2_id.text), str(q3_id.text), str(q4_id.text)])

@@ -1,0 +1,99 @@
+#: import get_color_from_hex kivy.utils.get_color_from_hex
+
+
+<RestorationViewClass>:
+    orientation: "horizontal"
+    padding: [1, 5, 1, 5]
+    spacing: 4
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, .06
+        Line:
+            points: (self.x,self.y, self.width,self.y)
+
+    MDLabel:
+        text: str(root.num)
+        text_size: self.size
+        halign: "left"
+        valign: "center"
+        size_hint: .05, 1
+    MDLabel:
+        text: str(root.date)
+        text_size: self.size
+        halign: "left"
+        valign: "center"
+        size_hint: .5, 1
+    MDLabel:
+        text: str(root.file_name)
+        text_size: self.size
+        halign: "left"
+        valign: "center"
+        size_hint: 1, 1
+
+
+    MDRectangleFlatButton:
+        text: "Restaurer"
+        size_hint: .2, 1
+        md_bg_color: 1, 1, 1, .03
+        pos_hint: {"center_x": .5, "center_y": .5}
+        on_release: root.parent_instance.restaure_encryption_key(root.id)
+
+
+
+<RestorationWindow>:
+    MDBoxLayout:
+        orientation: "vertical"
+        padding: [2, 2, 5, 2]
+        MDBoxLayout:
+            size_hint: 1, .1
+            orientation: "horizontal"
+            padding: [10, 0, 0, 0]
+            canvas.before:
+                Color:
+                    rgba: 1, 1, 1, .03
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
+            Widget:
+                size_hint: .05, 1
+            MDLabel:
+                text: "Date de chiffrement"
+                text_size: self.size
+                valign: "center"
+                haling: "left"
+                size_hint: .55, 1
+            MDLabel:
+                text: "Fichier"
+                text_size: self.size
+                valign: "center"
+                haling: "left"
+                size_hint: 1, 1
+            MDRaisedButton:
+                size_hint: .3, .8
+                text: "Supprimer la sauvegarde"
+                font_size: "14dp"
+                pos_hint: {"center_x": .5, "center_y": .5}
+                md_bg_color: get_color_from_hex("#C94F4F")
+                on_release: root.erase_backup()
+
+        RecycleView:
+            id: restauration_viewclass_id
+            key_viewclass: 'viewclass'
+            key_size: 'height'
+            bar_color: get_color_from_hex("#9F9F9F")
+            scroll_type: ['bars', 'content']
+            bar_width: 8
+            RecycleBoxLayout:
+                padding: [1, 5, 8, 5]
+                default_size: None, dp(50)
+                default_size_hint: 1, None
+                size_hint_y: None
+                height: self.minimum_height
+                orientation: 'vertical'
+
+        MDRaisedButton:
+            text: "Quitter"
+            font_size: "15dp"
+            size_hint_x: .2
+            pos_hint: {"center_x": .5, "center_y": .5}
+            on_release: root.parent.parent.parent.dismiss()

@@ -1,0 +1,59 @@
+#: import get_color_from_hex kivy.utils.get_color_from_hex
+
+<HistoryViewClass>:
+    MDLabel:
+        size_hint_y: None
+        height: self.texture_size[1]
+        text_size: self.width, None
+        padding: [5, 5, 5, 3]
+        text: str(root.content)
+        valign: "center"
+        halign: "left"
+        theme_text_color: "Custom"
+        text_color: "white" if root.status == "Succès" else "red"
+
+
+<HistoryWindow>:
+    MDBoxLayout:
+        orientation: "vertical"
+        spacing: 7
+        padding: [3, 10, 3, 3]
+        MDBoxLayout:
+            size_hint: .9, .07
+            spacing: 5
+            pos_hint: {"center_x": .5, "center_y": .5}
+            MDRaisedButton:
+                text: "Effacer l'historique"
+                font_size: "12dp"
+                size_hint: 1, 1
+                md_bg_color: get_color_from_hex("#463C4B")
+                on_release: root.erase_history()
+
+            MDRaisedButton:
+                text: "Exporter vers Pdf"
+                font_size: "12dp"
+                size_hint: 1, 1
+                md_bg_color: get_color_from_hex("#463C4B")
+                on_release: root.export_to_pdf()
+
+        RecycleView:
+            id: history_viewclass_id
+            key_viewclass: 'viewclass'
+            key_size: 'height'
+            bar_color: get_color_from_hex("#9F9F9F")
+            scroll_type: ['bars', 'content']
+            bar_width: 8
+            RecycleBoxLayout:
+                padding: [1, 0, 1, 0]
+                default_size: None, dp(180)
+                default_size_hint: 1, None
+                size_hint_y: None
+                height: self.minimum_height
+                orientation: 'vertical'
+
+        MDRaisedButton:
+            text: "Quitter"
+            font_size: "15dp"
+            size_hint_x: .2
+            pos_hint: {"center_x": .5, "center_y": .5}
+            on_release: root.parent.parent.parent.dismiss()
