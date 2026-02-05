@@ -59,8 +59,8 @@
 
 - Cloner le dépôt avec 
 ```bash
-git clone clone https://github.com/isaacbumizi-dev/lock-shield.git
-cd lock-shield/Version_2.0
+git clone clone https://github.com/isaacbumizi-dev/Lock-Shield.git
+cd Lock-Shield/Version_2.0
 ```
 - Créer un environnement virtuel (recommandé)
 ```bash
@@ -84,7 +84,7 @@ python main.py
 ### Méthode 2: Installation Rapide
 ```bash
 # En une seule commande
-git clone clone https://github.com/isaacbumizi-dev/lock-shield.git && cd lock-shield/Version_2.0 && pip install -r requirements.txt && python main.py
+git clone clone https://github.com/isaacbumizi-dev/Lock-Shield.git && cd Lock-Shield/Version_2.0 && pip install -r requirements.txt && python main.py
 ```
 
 ## Utilisation
@@ -235,7 +235,7 @@ Processus de Contribution
 1. Fork le projet
 2. Clone votre fork
 ```bash
-git clone clone https://github.com/isaacbumizi-dev/lock-shield.git
+git clone clone https://github.com/isaacbumizi-dev/Lock-Shield.git
 ```
 
 3. Créez une branche pour votre fonctionnalité
@@ -341,4 +341,5 @@ pip install -r requirements.txt
 4. Problème de base de données
 - Supprimer le fichier data/.slt3_lite_sqli.sqlite 
 - Redémarrer l'application pour recréer la base
+
 
