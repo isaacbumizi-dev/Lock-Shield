@@ -1,7 +1,5 @@
 import os
 import time
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
 
 from kivy.uix.popup import Popup
 from kivymd.app import MDApp
@@ -12,10 +10,13 @@ from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.button import MDRaisedButton
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.label import MDLabel
+from kivymd.uix.textfield import MDTextField
 from kivymd.uix.relativelayout import MDRelativeLayout
 
 from gui.components import fileChooser
-from kivymd.uix.textfield import MDTextField
+
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
 
 
 class HistoryViewClass(MDBoxLayout):

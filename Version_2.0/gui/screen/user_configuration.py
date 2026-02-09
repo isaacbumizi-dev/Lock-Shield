@@ -139,7 +139,11 @@ class UserConfiguration(MDRelativeLayout):
 
                             else:
                                 self.is_config_defined = False
-                                self._open_dialog_box("Échec de configuration", "Échec de l'enregistrement dans la base de données.")
+                                self._open_dialog_box(
+                                    title="Échec de configuration",
+                                    content="Échec de l'enregistrement dans la base de données.\n"
+                                            "Lancer l'application avec les droits d'adminstrateur pourrait résoudre le probleme."
+                                )
 
                     except Exception as e:
                         self.is_config_defined = False

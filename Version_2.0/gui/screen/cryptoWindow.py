@@ -28,7 +28,6 @@ class EncryptionOptions(MDBoxLayout):
     def __init__(self, parent_instance, **kwargs):
         super().__init__(**kwargs)
 
-
         self.parent_instance = parent_instance
 
         if self.parent_instance.ids['file_target_checkbox'].active:
@@ -180,32 +179,6 @@ class CryptoWindow(MDBoxLayout):
         self.config_popup = None
         self.running_app = MDApp.get_running_app()
 
-
-    def define_encryption_options(self, encryption_algorithm, key_size, encryption_key) -> None:
-        """
-        Cette methode define les options de chiffrement choisit par l'utilisateur
-        :param encryption_algorithm: l'algorithme de chiffrement
-        :param key_size: la longeur de la clé à utilisé lors du chiffrement
-        :param encryption_key: la clé de chiffrement
-        """
-        self.encryption_algorithm = encryption_algorithm
-        self.encryption_key_size = key_size
-        self.encryption_key = encryption_key
-
-        if self.encryption_algorithm and self.encryption_key_size and self.encryption_key:
-            self.close_config_popup()
-
-    def define_decryption_key(self, decryption_key) -> None:
-        """
-        Cette methode definie la clé de déchiffrement
-        :param decryption_key: la clé de déchiffrement
-        :return
-        """
-        self.decryption_key = decryption_key
-
-        if self.decryption_key is not None:
-            self.close_config_popup()
-
     def _close_dialog_box(self, *args) -> None:
         """
         Cette methode ferme la boîte de dialogue
@@ -256,6 +229,8 @@ class CryptoWindow(MDBoxLayout):
         chiffrement/Déchiffrement
         :return
         """
+        popup_content = EncryptionOptions(self) if self.ids['enc_operation_checkbox'].active else DecryptionOptions(self)
+
         self.config_popup = Popup(
             title="",
             size_hint=(None, None),
@@ -264,9 +239,35 @@ class CryptoWindow(MDBoxLayout):
             background_color=(0,0,0,0),
             separator_color=get_color_from_hex("FEA674"),
             pos_hint={"center_x": .5, "center_y": .5},
-            content=EncryptionOptions(self) if self.ids['enc_operation_checkbox'].active else DecryptionOptions(self)
+            content=popup_content
         )
         self.config_popup.open()
+
+    def define_encryption_options(self, encryption_algorithm, key_size, encryption_key) -> None:
+        """
+        Cette methode define les options de chiffrement choisit par l'utilisateur
+        :param encryption_algorithm: l'algorithme de chiffrement
+        :param key_size: la longeur de la clé à utilisé lors du chiffrement
+        :param encryption_key: la clé de chiffrement
+        """
+        self.encryption_algorithm = encryption_algorithm
+        self.encryption_key_size = key_size
+        self.encryption_key = encryption_key
+
+        if self.encryption_algorithm and self.encryption_key_size and self.encryption_key:
+            self.close_config_popup()
+
+    def define_decryption_key(self, decryption_key) -> None:
+        """
+        Cette methode definie la clé de déchiffrement
+        :param decryption_key: la clé de déchiffrement
+        :return
+        """
+        self.decryption_key = decryption_key
+
+        if self.decryption_key is not None:
+            self.close_config_popup()
+
 
     @staticmethod
     def _get_child_number_in_directory(path):
@@ -384,6 +385,7 @@ class CryptoWindow(MDBoxLayout):
         :param
         """
         self.ids['launch_button_id'].disabled = False
+        self.ids['operation_progress_bar'].value = 0
         self.ids['operation_progress_bar'].opacity = 0
         self.ids['operation_progress_bar'].disabled = True
 
@@ -403,13 +405,13 @@ class CryptoWindow(MDBoxLayout):
         file_name = os.path.basename(file_path)
 
         if not os.path.exists(file_path):
-            self._update_operation_label_text(f"Le fichier {file_name} n'existe plus")
+            self._update_operation_label_text(f"Le fichier {file_name} n'existe plus", True)
             return
 
         if self._check_encryption_status(file_path):
             self._update_operation_label_text(f"Le fichier {file_name} est déjà chiffré", True)
 
-            self.running_app.DATABASE_MANAGER.add_new_history(
+            db = self.running_app.DATABASE_MANAGER.add_new_history(
                 operation="Chiffrement",
                 file=file_path,
                 size="%.3f Mo" % (os.path.getsize(file_path) / (1024 * 1024)),
@@ -417,6 +419,12 @@ class CryptoWindow(MDBoxLayout):
                 problem="Le fichier est déjà chiffré.",
                 algorithm=f"{self.encryption_algorithm}-{self.encryption_key_size}"
             )
+            if db is False:
+                self._open_dialog_box(
+                    title="Erreur d'enregistrement",
+                    content="Une erreur est suvenue lors de l'enregistrement dans la l'historique des opérations.\n"
+                            "Lancer l'application avec les droits d'adminstrateur pourrait résoudre le probleme."
+                )
         else:
             started_time = time.time()
             try:
@@ -433,13 +441,11 @@ class CryptoWindow(MDBoxLayout):
                 )
 
                 if not encryption_result[0]:
-                    self._update_operation_label_text(f"Échec du chiffrement. Veuillez réessayer.", True)
-                    try:
-                        os.remove(file_path + ".bin")
-                    except:
-                        pass
+                    self._update_operation_label_text(f"Échec de chiffrement du fichier {file_name}. Veuillez réessayer.", True)
+                    try: os.remove(file_path + ".bin")
+                    except: pass
 
-                    self.running_app.DATABASE_MANAGER.add_new_history(
+                    db = self.running_app.DATABASE_MANAGER.add_new_history(
                         operation="Chiffrement",
                         file=file_path,
                         size="%.3f Mo" % (os.path.getsize(file_path) / (1024 * 1024)),
@@ -447,19 +453,31 @@ class CryptoWindow(MDBoxLayout):
                         problem=encryption_result[1],
                         algorithm=f"{self.encryption_algorithm}-{self.encryption_key_size}"
                     )
+                    if db is False:
+                        self._open_dialog_box(
+                            title="Erreur d'enregistrement",
+                            content="Une erreur est suvenue lors de l'enregistrement dans la l'historique des opérations.\n"
+                                    "Lancer l'application avec les droits d'adminstrateur pourrait résoudre le probleme."
+                        )
                 else:
                     encrypted_key = encrypt_password(
                         password=encryption_key.encode('utf-8'),
                         encryption_key=self.running_app.MASTER_ACCESS_PASSWORD
                     )
                     if encrypted_key:
-                        self.running_app.DATABASE_MANAGER.add_new_backup(
+                        db = self.running_app.DATABASE_MANAGER.add_new_backup(
                             file=file_path,
                             key=encrypted_key
                         )
+                        if db is False:
+                            self._open_dialog_box(
+                                title="Erreur d'enregistrement",
+                                content="Une erreur est suvenue lors de la sauvegarde de la clé de chiffrement.\n"
+                                        "Lancer l'application avec les droits d'adminstrateur pourrait résoudre le probleme."
+                            )
 
                     self._update_operation_label_text(f"Chiffrement du fichier {file_name} terminé")
-                    self.running_app.DATABASE_MANAGER.add_new_history(
+                    db = self.running_app.DATABASE_MANAGER.add_new_history(
                         operation="Chiffrement",
                         file=file_path,
                         size="%.3f Mo" % (os.path.getsize(file_path) / (1024 * 1024)),
@@ -467,6 +485,13 @@ class CryptoWindow(MDBoxLayout):
                         duration=time.time()-started_time,
                         algorithm=f"{self.encryption_algorithm}-{self.encryption_key_size}"
                     )
+                    if db is False:
+                        self._open_dialog_box(
+                            title="Erreur d'enregistrement",
+                            content="Une erreur est suvenue lors de l'enregistrement dans la l'historique des opérations.\n"
+                                    "Lancer l'application avec les droits d'adminstrateur pourrait résoudre le probleme."
+                        )
+
             except Exception:
                 self._update_operation_label_text(f"Une erreur inattendue s'est produite.", True)
 
@@ -483,7 +508,7 @@ class CryptoWindow(MDBoxLayout):
         if not algorithm or not key_lenght:
             self._update_operation_label_text(f"Le fichier {file_name} ne peut pas être déchiffré par cette application.", True)
 
-            self.running_app.DATABASE_MANAGER.add_new_history(
+            db = self.running_app.DATABASE_MANAGER.add_new_history(
                 operation="Déchiffrement",
                 file=file_path,
                 size="%.3f Mo" % (os.path.getsize(file_path) / (1024 * 1024)),
@@ -491,6 +516,12 @@ class CryptoWindow(MDBoxLayout):
                 algorithm=f"{algorithm}-{key_lenght}",
                 problem="Le logiciel ne pas en mesure d'identifier l'algorithme de chiffrement utilisé pour ce fichier"
             )
+            if db is False:
+                self._open_dialog_box(
+                    title="Erreur d'enregistrement",
+                    content="Une erreur est suvenue lors de l'enregistrement dans la l'historique des opérations.\n"
+                            "Lancer l'application avec les droits d'adminstrateur pourrait résoudre le probleme."
+                )
         else:
             started_time = time.time()
             try:
@@ -507,12 +538,10 @@ class CryptoWindow(MDBoxLayout):
 
                 if not decryption_result[0]:
                     self._update_operation_label_text(decryption_result[1], True)
-                    try:
-                        os.remove(file_path + ".bin")
-                    except:
-                        pass
+                    try: os.remove(file_path + ".bin")
+                    except: pass
 
-                    self.running_app.DATABASE_MANAGER.add_new_history(
+                    db = self.running_app.DATABASE_MANAGER.add_new_history(
                         operation="Déchiffrement",
                         file=file_path,
                         size="%.3f Mo" % (os.path.getsize(file_path) / (1024 * 1024)),
@@ -520,9 +549,15 @@ class CryptoWindow(MDBoxLayout):
                         algorithm=f"{algorithm}-{key_lenght}",
                         problem=decryption_result[1]
                     )
+                    if db is False:
+                        self._open_dialog_box(
+                            title="Erreur d'enregistrement",
+                            content="Une erreur est suvenue lors de l'enregistrement dans la l'historique des opérations.\n"
+                                    "Lancer l'application avec les droits d'adminstrateur pourrait résoudre le probleme."
+                        )
                 else:
                     self._update_operation_label_text(f"Déchiffrement du fichier {file_name} terminé avec succès.")
-                    self.running_app.DATABASE_MANAGER.add_new_history(
+                    db = self.running_app.DATABASE_MANAGER.add_new_history(
                         operation="Déchiffrement",
                         file=file_path,
                         size="%.3f Mo" % (os.path.getsize(file_path) / (1024 * 1024)),
@@ -530,6 +565,12 @@ class CryptoWindow(MDBoxLayout):
                         duration=time.time() - started_time,
                         algorithm=f"{algorithm}-{key_lenght}"
                     )
+                    if db is False:
+                        self._open_dialog_box(
+                            title="Erreur d'enregistrement",
+                            content="Une erreur est suvenue lors de l'enregistrement dans la l'historique des opérations.\n"
+                                    "Lancer l'application avec les droits d'adminstrateur pourrait résoudre le probleme."
+                        )
 
             except Exception:
                 self._update_operation_label_text(f"Une erreur inattendue s'est produite.", True)
@@ -552,6 +593,7 @@ class CryptoWindow(MDBoxLayout):
                     content="Aucun fichier sélectionné pour cette opération."
                 )
                 return
+
         elif folder_target_checkbox is True:
             path = selected_path[1]
             if not os.path.isdir(path):
@@ -621,9 +663,9 @@ class CryptoWindow(MDBoxLayout):
                             nb_total = self._get_child_number_in_directory(path=target_path)
                             nb = 0
 
-                            for path, dirs, files in os.walk(target_path):
+                            for pt, dirs, files in os.walk(target_path):
                                 for file in files:
-                                    str_path = os.path.join(path, file)
+                                    str_path = os.path.join(pt, file)
                                     self._encrypt_file(
                                         file_path=str_path,
                                         encryption_key=self.encryption_key,
@@ -634,7 +676,7 @@ class CryptoWindow(MDBoxLayout):
                                     nb += 1
                                     self.ids['count_target_id'].text = f"( {nb}/{nb_total} )"
 
-                            self._update_operation_label_text(f"Chiffrement du dossier {target_path} terminé avec succès.")
+                            self._update_operation_label_text(f"Chiffrement du dossier {target_path} terminé.")
 
                 elif decryption_operation_checkbox is True:
                     if not self.decryption_key:
@@ -652,9 +694,9 @@ class CryptoWindow(MDBoxLayout):
                             nb_total = self._get_child_number_in_directory(path=target_path)
                             nb = 0
 
-                            for path, dirs, files in os.walk(target_path):
+                            for pt, dirs, files in os.walk(target_path):
                                 for file in files:
-                                    str_path = os.path.join(path, file)
+                                    str_path = os.path.join(pt, file)
                                     self._decrypt_file(
                                         file_path=str_path,
                                         decryption_key=self.decryption_key
@@ -664,7 +706,7 @@ class CryptoWindow(MDBoxLayout):
                                     nb += 1
                                     self.ids['count_target_id'].text = f"( {nb}/{nb_total})"
 
-                            self._update_operation_label_text(f"Déchiffrement du dossier {target_path} terminé avec succès.")
+                            self._update_operation_label_text(f"Déchiffrement du dossier {target_path} terminé.")
                 else:
                     self._open_dialog_box(
                         title="Opération impossible",

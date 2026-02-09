@@ -31,17 +31,19 @@ from kivy.lang import Builder
 from kivy.uix.popup import Popup
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivy.properties import ObjectProperty
-
+from kivymd.uix.button import MDRaisedButton
+from kivymd.uix.dialog import MDDialog
 
 from gui.components.spinner import CustomSpinner
 from gui.components.screenManager import DynamicScreenManager
 from core.database.database import DatabaseManager
 
+
 class ScreenNavigator(DynamicScreenManager):
     pass
 
 
-class MainApplicationApp(MDApp):
+class LockShieldApp(MDApp):
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
         BASE_DIR = sys._MEIPASS
         EXC_DIR = os.path.dirname(sys.executable)
@@ -52,8 +54,8 @@ class MainApplicationApp(MDApp):
     else:
         BASE_DIR = EXC_DIR = os.path.dirname(os.path.abspath(__file__))
     
-    DATA_STORGAGE = os.path.join(EXC_DIR, 'data')
 
+    DATA_STORGAGE = os.path.join(EXC_DIR, 'data')
     APP_ICON = os.path.join(BASE_DIR, 'assets', 'images', 'profil.png')
 
     SCREEN_MANAGER = ObjectProperty(None)
@@ -106,20 +108,44 @@ class MainApplicationApp(MDApp):
         self.theme_cls.primary_palette = "Green"
         self.theme_cls.primary_hue = "800"
 
-        self.load_all_kv_files(path_to_directory="gui/style/")
+        self.load_all_kv_files(path_to_directory=os.path.join(self.BASE_DIR, 'gui', 'style'))
 
         self.SCREEN_MANAGER = ScreenNavigator()
         return self.SCREEN_MANAGER
 
 
     def on_start(self):
-        os.makedirs(self.DATA_STORGAGE, exist_ok=True)
-        self.DATABASE_MANAGER.initialize_database()
+        try:
+            os.makedirs(self.DATA_STORGAGE, exist_ok=True)
+            self.DATABASE_MANAGER.initialize_database()
 
-        if self.DATABASE_MANAGER.is_configuration_exist():
-            self.SCREEN_MANAGER.push("authentificationScreen")
-        else:
-            self.SCREEN_MANAGER.push("userConfigScreen")
+            if self.DATABASE_MANAGER.is_configuration_exist():
+                self.SCREEN_MANAGER.push("authentificationScreen")
+            else:
+                self.SCREEN_MANAGER.push("userConfigScreen")
+        except Exception:
+            dialog_box = None
+            def close_dialog_box(*args):
+                if dialog_box is not None:
+                    dialog_box.dismiss()
+                    sys.exit(0)
+
+            dialog_box = MDDialog(
+                title="Lancement Impossible",
+                text="Une erreur inattendue est survenue lors de la configuration de la base des données.\n"
+                     "Lancer l'application avec les droits d'adminstrateur pourait resoudre le probleme.",
+                radius=[5, 5, 5, 5],
+                auto_dismiss=False,
+                buttons=[
+                    MDRaisedButton(
+                        text="Fermer",
+                        theme_text_color="Custom",
+                        text_color="black",
+                        on_release=close_dialog_box
+                    )
+                ],
+            )
+            dialog_box.open()
 
     def load_all_kv_files(self, path_to_directory: str) -> None:
         Builder.load_file(os.path.join(path_to_directory, "userconfiguration.kv"))
@@ -152,4 +178,4 @@ class MainApplicationApp(MDApp):
 
 
 if __name__ == "__main__":
-    MainApplicationApp().run()
+    LockShieldApp().run()

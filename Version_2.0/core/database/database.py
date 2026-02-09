@@ -11,8 +11,6 @@ class DatabaseManager:
         self.config_id = "ff21a594-e215-4cb8-847a-139bf14c7a13"
         self.database = os.path.join(db_path, ".slt3_lite_sqli.sqlite")
 
-        os.makedirs(db_path, exist_ok=True)
-
 
     def initialize_database(self):
         """
@@ -20,6 +18,7 @@ class DatabaseManager:
         :param
         :return
         """
+        os.makedirs(os.path.dirname(self.database), exist_ok=True)
         with sqlite3.connect(database=self.database) as conn:
             cursor = conn.cursor()
 
@@ -63,10 +62,10 @@ class DatabaseManager:
         Cette methode permet de savoir s'il existe une configuration (mot de passe d'access, Reponse sec question)
         :return: True si elle existe False si non
         """
-        with sqlite3.connect(database=self.database) as conn:
-            conn.row_factory = sqlite3.Row
-            cursor = conn.cursor()
-            try:
+        try:
+            with sqlite3.connect(database=self.database) as conn:
+                conn.row_factory = sqlite3.Row
+                cursor = conn.cursor()
                 cursor.execute("SELECT * FROM configuration WHERE id = ?", (self.config_id,))
                 data = [dict(row) for row in cursor.fetchall()]
                 if data:
@@ -79,8 +78,8 @@ class DatabaseManager:
                             return False
                     return True
                 return False
-            except Exception:
-                return False
+        except Exception:
+            return False
 
     def get_access_password(self):
         """
@@ -282,6 +281,7 @@ class DatabaseManager:
                 ))
                 conn.commit()
                 return True
+
             except Exception:
                 conn.rollback()
                 return False

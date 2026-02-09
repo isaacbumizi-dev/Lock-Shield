@@ -10,7 +10,6 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 
-
 def get_algorithm_signature():
     """
     le signature numerique de chaque algorithme est représentés par un hash md5(hexdigest), avec comme valeur:
@@ -174,40 +173,21 @@ def decrypt_file(file, decryption_key, decryption_algorithm, callback=None):
             sign_iv = input_file.read(48)
             cipher = AES.new(decryption_key, decryption_mode, sign_iv[32:])
 
-            remaining = file_size - 48
-            while remaining > 0:
-                read_size = min(chunk_size, remaining)
-                chunk = input_file.read(read_size)
-                if not chunk:
-                    break
-
-                decrypted_chunk = cipher.decrypt(chunk)
-                current_size += len(chunk)
-
-                if remaining - len(chunk) <= 0:
-                    try:
-                        decrypted_chunk = unpad(decrypted_chunk, AES.block_size)
-                    except ValueError:
-                        return False, "Padding incorrect - Clé invalide"
-
-                output_file.write(decrypted_chunk)
-                remaining -= len(chunk)
-
-                if callback:
-                    callback((current_size * 100) / file_size)
-
-            """while chunk := input_file.read(chunk_size + AES.block_size):
+            while chunk := input_file.read(chunk_size + AES.block_size):
                 decrypted_chunk = unpad(cipher.decrypt(chunk), AES.block_size)
                 output_file.write(decrypted_chunk)
 
                 current_size += len(chunk)
                 if callback:
-                    callback((current_size * 100) / file_size)"""
+                    callback((current_size * 100) / file_size)
 
         os.remove(file)
         os.renames(file + ".bin", file)
         return True,
     except Exception as e:
+        if os.path.exists(file + ".bin"):
+            os.remove(file + ".bin")
+
         if "Padding" in str(e):
             return False, f"Clé de déchiffrement invalide.: {os.path.basename(file)}"
         else:
